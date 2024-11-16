@@ -21,19 +21,19 @@ def print_number_of_trainable_model_parameters(model):
             trainable_model_params += param.numel()
     return f"trainable model parameters: {trainable_model_params}\nall model parameters: {all_model_params}\npercentage of trainable model parameters: {100 * trainable_model_params / all_model_params:.2f}%"
 
-def write_csv(results, filename='llm_jssp_results.csv'):
+def write_csv(results, filename='llm_nursing.csv'):
     """
     Writes the results to a CSV file.
 
     Args:
         results (list): The list of results to write.
-        filename (str, optional): The name of the output file. Defaults to 'llm_jssp_results.csv'.
+        filename (str, optional): The name of the output file. Defaults to 'llm_nursing.csv'.
     """
     try:
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, mode='w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['num_jobs','num_machines', 'best_gap', 'is_feasible_list', 'gap_list', 'time_list', 'llm_makespan_list' , 'calculated_makespan_list', 'peft_model_text_output'])
+            writer.writerow(['best_gap', 'is_feasible_list', 'gap_list', 'time_list', 'llm_makespan_list' , 'calculated_makespan_list', 'peft_model_text_output'])
             for result in results:
                 writer.writerow(result)
         print(f"Results successfully saved to {filename}")

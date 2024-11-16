@@ -18,7 +18,7 @@ seed = 42
 set_seed(seed)
 #tensorboard --logdir=peft-phi2-jssp-training-consise/logs
 
-custom_dataset_name = './jssp_llm_format_120k.json'
+custom_dataset_name = "prompt_response_data.json"
 
 dataset = load_dataset("json", data_files=custom_dataset_name)
 print(dataset)
@@ -40,7 +40,7 @@ original_model = AutoModelForCausalLM.from_pretrained(model_name,
                                                       device_map='auto',
                                                       quantization_config=bnb_config,
                                                       trust_remote_code=True,
-                                                      use_auth_token=True,
+                                                      use_auth_token=False,
                                                       )
 
 tokenizer = AutoTokenizer.from_pretrained(model_name,trust_remote_code=True)#,padding_side="left",add_eos_token=True,add_bos_token=True,use_fast=False)
@@ -75,17 +75,17 @@ def gen(model,p, maxlen=1000, sample=False):
 
 index = 0
 
-VAL_SET_SIZE = 2000
+VAL_SET_SIZE = 10
 
 train_val = dataset["train"].train_test_split(
     test_size=VAL_SET_SIZE, shuffle=True, seed=42
 )
 dataset = train_val
 
-prompt = dataset['test'][index]['prompt_machines_first']
-summary = dataset['test'][index]['output']
+prompt = dataset['test'][index]['prompt']
+summary = dataset['test'][index]['response']
 
-formatted_prompt = f"Instruct: Provide a schedule for the following JSSP problem .\n{prompt}\nOutput:\n"
+formatted_prompt = f"Instruct: Provide a schedule for the following Nursing Scheduling problem .\n{prompt}\nOutput:\n"
 res = gen(original_model,formatted_prompt,2000,)
 #print(res[0])
 output = res[0].split('Output:\n')[1]
@@ -161,7 +161,7 @@ peft_model = get_peft_model(original_model, config)
 print(print_number_of_trainable_model_parameters(peft_model))
 
 
-output_dir = './testing_final_code_peft-phi3-jssp/'
+output_dir = './testing_final_code_peft-phi3-nursing_scheduling/'
 
 
 MICRO_BATCH_SIZE = 2 
